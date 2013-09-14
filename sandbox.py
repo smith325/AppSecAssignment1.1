@@ -23,28 +23,11 @@ def blacklisted(word):
 		return False
 
 def permissions():
-	# make sure to copy input files countdown.py and fibonacci.py to the /tmp/sandbox/ path
-	#define the location of 'mytemp' parent folder relative to the system temp
-	
-	# sysTemp = tempfile.gettempdir()
-	# myTemp = os.path.join(sysTemp,'jail')
 
-	#You must make sure myTemp exists
-	# if not os.path.exists(myTemp):
-	#     os.makedirs(myTemp)
-
-	#now make your temporary sub folder
+	#temporary folder called Jail
 	tempdir = tempfile.mkdtemp(suffix='JAIL')
 
 	print tempdir
-
-	# print "checking permissions"
-	# path = "/tmp/sandbox/"
-	# os.chdir(path)
-
-	# uid = pwd.getpwnam("nobody").pw_uid
-	# gid = grp.getgrnam("nogroup").gr_gids
-	# os.chown(path, uid, gid)
 
 
 
