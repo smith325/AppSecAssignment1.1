@@ -17,20 +17,16 @@ class Sandbox():
 		self.main(self.filename)
 
 	def scanner(self,filename):
+		print "begin parsing "+filename
 		with open(filename, "r") as f:
 			lines = f.read()
 			tree = ast.parse(lines)
 			return self.traverser(tree)
 
 	def traverser(self,node):
-		print "node: "+node.__class__.__name__
-
 		if node.__class__ == ast.Name:
 			if not self.whitelisted(node.id):
 				return False
-
-		for entry in ast.iter_fields(node):
-			print entry
 		
 		children = ast.iter_child_nodes(node)
 		for child in children:
@@ -99,7 +95,11 @@ class Sandbox():
 					if hasattr(__builtins__,'__dict__'):
 						__builtins__.__dict__[key] = None
 
-			execfile(filename)#,builtins_dict,builtins_dict)
+			# remove executing file from args
+			if len(sys.argv) > 1:
+				sys.argv.pop(0) 
+			
+			execfile(filename,builtins_dict,builtins_dict)
 
 		else:
 			print "invalid content!" 
