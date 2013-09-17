@@ -9,10 +9,14 @@ class Sandbox():
 
 	def __init__(self,filename):
 		self.filename = filename
+		
 		self.lexical_entries=["pass","as","with","and","elif","from","return","else","not","try","class","except","if","or","while",
 		"continue","import","in","print","def","finally","for","is","in","raise"]
-		self.lexical_functions = ["hasattr","isinstance","getattr","tuple","compile","execfile","globals","type","dir","ValueError","open","set","iter","len","list","next","input","False", 
-		"True","None", "__import__","__package__","__name__","abs","all","any","bool","bytearray","bytes","dict","enumerate","float","help","str","sorted","range","sum","round","print","pow","object","sum","min","max","int"]
+
+		#Sandbox requires "hasattr","isinstance","getattr","tuple","execfile","type","dir","open","compile", "__import__","__package__",
+		self.lexical_functions = ["hasattr","isinstance","getattr","tuple","type","ValueError","set","iter","len","list","next","input","False", 
+		"True","None","__name__","abs","all","any","bool","bytearray","bytes","dict","enumerate","float","help","str",
+		"sorted","range","sum","round","print","pow","object","sum","min","max","int"]
 
 		self.main(self.filename)
 
@@ -85,10 +89,17 @@ class Sandbox():
 		os.setuid = pwd.getpwnam("nobody").pw_uid
 		os.setgid = grp.getgrnam("nogroup").gr_gid
 
+	def makeExecClosure(self, filename, builtins_dict):
+		local_exec = execfile
+		def execClosure():
+			local_exec(filename, builtins_dict, builtins_dict)
+		return execClosure
+
 	def main(self,filename):
 		if self.scanner(filename):
 			# self.permissions()
 			builtins_dict = {}
+			local_exec = self.makeExecClosure(filename, builtins_dict)
 
 			for key in dir(__builtins__):
 				if key not in self.lexical_functions:
@@ -99,7 +110,7 @@ class Sandbox():
 			if len(sys.argv) > 1:
 				sys.argv.pop(0) 
 			
-			execfile(filename,builtins_dict,builtins_dict)
+			local_exec()
 
 		else:
 			print "invalid content!" 
