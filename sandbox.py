@@ -14,11 +14,17 @@ class Sandbox():
 		"continue","in","print","def","finally","for","is","in","raise"]
 
 		#Sandbox requires "hasattr","isinstance","getattr","tuple","execfile","type","dir","open","compile", "__import__","__package__",
-		self.lexical_functions = ["hasattr","isinstance","getattr","tuple","type","ValueError","set","iter","len","list","next","input","False", 
+		self.lexical_functions = ["hasattr","isinstance","getattr","tuple","type","ValueError","set","iter","len","list","next","False", 
 		"True","None","__name__","abs","all","any","bool","bytearray","bytes","dict","enumerate","float","help","str",
 		"sorted","range","sum","round","print","pow","object","sum","min","max","int"]
 
-		self.main(self.filename)
+		if os.path.exists(self.filename):
+			self.main(self.filename)
+		else:
+			print "invalid filetype"
+			sys.exit(0)
+		
+		
 
 	def scanner(self,filename):
 		print "begin parsing "+filename
@@ -67,23 +73,24 @@ class Sandbox():
 		else:
 			return True # non keywords
 
-	def permissions(self):
+	def permissions(self,filename):
 
 		#temporary folder called Jail
 		# tempdir = tempfile.mkdtemp(suffix='JAIL')
 		# os.chroot(tempdir)
 		# print tempdir
+		if len(sys.argv) > 1:
+			os.chmod(filename,777)
+		else:
+			current_uid = pwd.getpwnam("nobody").pw_uid
+			current_gid = grp.getgrnam("nogroup").gr_gid
 
+			# os.setgroups([])
 
-		current_uid = pwd.getpwnam("nobody").pw_uid
-		current_gid = grp.getgrnam("nogroup").gr_gid
+			os.setgid(current_gid)
+			os.setuid(current_uid)
 
-		# os.setgroups([])
-
-		os.setgid(current_gid)
-		os.setuid(current_uid)
-
-		old_umask = os.umask(077)
+			old_umask = os.umask(077)
 
 	def decrease_permissions(self):
 		os.setuid = pwd.getpwnam("nobody").pw_uid
