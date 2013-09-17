@@ -1,7 +1,6 @@
 # Sarah Smith
 # fibonacci number program
 
-
 def calc_fib(index):
 	if index == 0:
 		return 0
@@ -13,3 +12,5 @@ def calc_fib(index):
 
 for i in range(0,11):
 	print calc_fib(i)
+
+
