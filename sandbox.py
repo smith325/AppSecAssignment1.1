@@ -1,7 +1,7 @@
 # Sarah Smith
 # Sandbox
 
-import sys, os, re, pwd, grp, tempfile, token, inspect, keyword
+import sys, os, re, pwd, grp, tempfile, token, inspect, keyword, ast
 from types import *
 
 
@@ -12,26 +12,27 @@ class Sandbox():
 		self.main(self.filename)
 
 	def scanner(self,filename):
-
-		validwords = []
-
 		with open(filename, "r") as f:
 			lines = f.read()
-			word = re.split(r'\W+', lines)
-			wordcounter = len(word)
+			tree = ast.parse(lines)
+			return self.traverser(tree)
 
-			for i in range(0,wordcounter):
-				if self.whitelisted(word[i]):
-					validwords.append("true")
-				else:
-					validwords.append("false")
+	def traverser(self,node):
+		print "node: "+node.__class__.__name__
 
-			if "false" in validwords:
-				print "invalid content!"
-			else:
-				return True
-					
-					
+		if node.__class__ == ast.Name:
+			if not self.whitelisted(node.id):
+				return False
+
+		for entry in ast.iter_fields(node):
+			print entry
+		
+		children = ast.iter_child_nodes(node)
+		for child in children:
+			if not self.traverser(child):
+				return False
+		
+		return True
 
 	def whitelisted(self,word):
 		# define whitelisted built-in keywords
@@ -56,16 +57,12 @@ class Sandbox():
 			else:
 				print "illegally attempted keyword call: " + word
 				return False
-				sys.exit(0)
-
 		elif word in dir(__builtins__):
 			if word in lexical_functions:
 				return True
 			else:
 				print "illegally attempted function call: " + word
 				return False
-				sys.exit(0)
-
 		else:
 			return True # non keywords
 
