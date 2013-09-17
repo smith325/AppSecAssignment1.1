@@ -11,7 +11,7 @@ class Sandbox():
 		self.filename = filename
 		
 		self.lexical_entries=["pass","as","with","and","elif","from","return","else","not","try","class","except","if","or","while",
-		"continue","import","in","print","def","finally","for","is","in","raise"]
+		"continue","in","print","def","finally","for","is","in","raise"]
 
 		#Sandbox requires "hasattr","isinstance","getattr","tuple","execfile","type","dir","open","compile", "__import__","__package__",
 		self.lexical_functions = ["hasattr","isinstance","getattr","tuple","type","ValueError","set","iter","len","list","next","input","False", 
@@ -94,6 +94,12 @@ class Sandbox():
 		def execClosure():
 			local_exec(filename, builtins_dict, builtins_dict)
 		return execClosure
+
+	def makeCompileClosure(self,filename):
+		local_compile = compile
+		def execCompClosure():
+			local_compile(filename)
+		return execCompClosure
 
 	def main(self,filename):
 		if self.scanner(filename):
