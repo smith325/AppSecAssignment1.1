@@ -4,5 +4,3 @@
 
 for counter in range (0,10):
 	print 10 - counter
-
-# exec set return eval
