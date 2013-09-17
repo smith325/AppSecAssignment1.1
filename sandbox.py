@@ -35,10 +35,10 @@ class Sandbox():
 
 	def whitelisted(self,word):
 		# define whitelisted built-in keywords
-		lexical_entries = ["and","elif","from","return","else","not","try","class","except","if","or","while","continue","import","in","print","def","finally","for","is","in","raise"]
+		lexical_entries = ["pass","as","with","and","elif","from","return","else","not","try","class","except","if","or","while","continue","import","in","print","def","finally","for","is","in","raise"]
 		
 		# define whitelisted built-in functions
-		lexical_functions = ["set","iter","len","list","next","input","False", "True","None", "__import__","__package__","__name__","abs","all","any","ascii","bool","bytearray","bytes","dict","enumerate","float","help","str","sorted","range","sum","round","print","pow","object","sum","min","max","int"]
+		lexical_functions = ["ValueError","open","set","iter","len","list","next","input","False", "True","None", "__import__","__package__","__name__","abs","all","any","ascii","bool","bytearray","bytes","dict","enumerate","float","help","str","sorted","range","sum","round","print","pow","object","sum","min","max","int"]
 
 		# First remove the integers, as they are allowed
 
@@ -48,12 +48,13 @@ class Sandbox():
 		except ValueError:
 			pass
 
+
 		# Next try for keywords followed by functions
 		if keyword.iskeyword(word):
 			if word in lexical_entries:
 				return True
 			else:
-				print "illegally attempted function call: " + word
+				print "illegally attempted keyword call: " + word
 				return False
 				sys.exit(0)
 
@@ -72,15 +73,16 @@ class Sandbox():
 
 		#temporary folder called Jail
 		tempdir = tempfile.mkdtemp(suffix='JAIL')
-
 		print tempdir
+
 		
 
 	def main(self,filename):
 		if self.scanner(filename):
+			self.permissions()
 			execfile(filename)
 		else:
-			print "illegal content" 
+			print "invalid content!" 
 			sys.exit(0)
 
 
